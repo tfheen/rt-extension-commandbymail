@@ -2,6 +2,7 @@ librt-extension-commandbymail-perl (0.10-1) unstable; urgency=low
 
   * New upstream release.
   * Use tfheen's patch to grab commands from headers too.
+  * Switch to dh and use debhelper 9
 
  -- Tollef Fog Heen <tfheen@debian.org>  Mon, 24 Jun 2013 09:50:09 +0200
 

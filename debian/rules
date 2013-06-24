@@ -7,59 +7,17 @@
 # This special exception was added by Craig Small in version 0.37 of dh-make.
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 P = $(CURDIR)/debian/librt-extension-commandbymail-perl
-R = $(P)/usr/share/request-tracker3.8
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
+%:
+	dh $@
+
+override_dh_auto_build:
 	perl -Idebian Makefile.PL
-	touch configure-stamp
-
-build: build-stamp
-build-stamp: configure-stamp 
-	dh_testdir
 	$(MAKE)
-	touch $@
 
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-	if test -f Makefile; then $(MAKE) distclean; fi
-	dh_clean 
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k 
-	dh_installdirs
+override_dh_auto_install:
 	sed -i "s,/usr/share/request-tracker4,$(P)/usr/share/request-tracker4,g" Makefile
-	$(MAKE) DESTDIR=$(CURDIR)/debian/librt-extension-commandbymail-perl INSTALLDIRS=vendor install
-#	rmdir --ignore-fail-on-non-empty --parents $(CURDIR)/debian/librt-extension-commandbymail-perl/usr/lib/perl5
-
-
-# Build architecture-independent files here.
-binary-indep: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs Changes
-	dh_installdocs README
-	dh_compress 
-	dh_fixperms
-	dh_installdeb
-	dh_perl
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-# Build architecture-dependent files here.
-binary-arch: build install
-# We have nothing to do by default.
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+	dh_auto_install
