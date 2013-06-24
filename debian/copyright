@@ -1,0 +1,27 @@
+This package was debianized by Matthew Johnson <debian@matthew.ath.cx> on
+Wed, 21 Mar 2007 10:03:30 +0000.
+
+It was downloaded from http://search.cpan.org/src/JESSE/RT-Extension-CommandByMail-0.05/
+
+Upstream Author: Jesse Vincent <jesse@fsck.com>
+
+Copyright: Copyright (C) 2006, Best Practical Solutions LLC
+
+License:
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of either:
+
+a) the GNU General Public License as published by the Free Software
+Foundation; either version 1, or (at your option) any later
+version, or
+
+b) the "Artistic License" which comes with Perl.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL' and
+the Artistic Licence in `/usr/share/common-licenses/Artistic'.
+
+The Debian packaging is (C) 2007, Matthew Johnson <debian@matthew.ath.cx> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+

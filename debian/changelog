@@ -1,0 +1,27 @@
+librt-extension-commandbymail-perl (0.10-1) unstable; urgency=low
+
+  * New upstream release.
+  * Use tfheen's patch to grab commands from headers too.
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Mon, 24 Jun 2013 09:50:09 +0200
+
+librt-extension-commandbymail-perl (0.07-1) unstable; urgency=low
+
+  * New upstream release
+  * Update build-depends to be on libmime-tools-perl
+  * Update paths for rt 3.8
+
+ -- Tollef Fog Heen <tfheen@varnish-software.com>  Mon, 08 Feb 2010 15:05:20 +0100
+
+librt-extension-commandbymail-perl (0.06-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Tollef Fog Heen <tfheen@jalfrezi.collabora.co.uk>  Wed, 15 Apr 2009 19:32:37 +0100
+
+librt-extension-commandbymail-perl (0.05-1) unstable; urgency=low
+
+  * Initial release (Closes: #415701)
+
+ -- Matthew Johnson <debian@matthew.ath.cx>  Thu, 22 Mar 2007 21:44:31 +0000
+

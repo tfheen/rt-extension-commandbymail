@@ -1,0 +1,15 @@
+Source: librt-extension-commandbymail-perl
+Section: misc
+Priority: extra
+Maintainer: Tollef Fog Heen <tfheen@varnish-software.com>
+Build-Depends: debhelper (>= 5), libuniversal-require-perl, libmime-tools-perl (>= 5.420), perl (>= 5)
+Standards-Version: 3.7.2
+
+Package: librt-extension-commandbymail-perl
+Architecture: all
+Depends: ${perl:Depends}, ${misc:Depends}, libuniversal-require-perl, libmime-tools-perl (>= 5.420), request-tracker4
+Description: Allow RT status and other commands by email
+ CommandByMail allows commands to be sent to the Request Tracker
+ in emails. These are similar to those used by debbugs and allow
+ tickets to be closed, reassigned, moved between queues and other
+ commands.
