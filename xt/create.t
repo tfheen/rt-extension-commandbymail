@@ -1,12 +1,8 @@
-#!/usr/bin/perl
-
 use strict;
 use warnings;
 
-use Test::More tests => 144;
-
-BEGIN { require 'xt/utils.pl' }
-RT::Init();
+use RT::Extension::CommandByMail::Test tests => undef;
+my $test = 'RT::Extension::CommandByMail::Test';
 
 my $test_ticket_id;
 
@@ -18,12 +14,28 @@ From: root\@localhost
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
     is($obj->id, $id, "loaded ticket");
     $test_ticket_id = $id;
+}
+
+diag("test with umlaut in subject") if $ENV{'TEST_VERBOSE'};
+{
+    my $text = <<END;
+Subject: test =?UTF-8?B?QnJvbnTDqw==?=
+From: root\@localhost
+
+test
+END
+    my (undef, $id) = $test->send_via_mailgate( $text );
+    ok($id, "created ticket");
+    my $obj = RT::Ticket->new( $RT::SystemUser );
+    $obj->Load( $id );
+    is($obj->id, $id, "loaded ticket");
+    is($obj->Subject, Encode::decode("UTF-8","test Brontë"), "got correct subject with umlauts");
 }
 
 # XXX: use statuses from config/libs
@@ -37,7 +49,7 @@ Status: $status
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -56,7 +68,7 @@ FinalPriority: $final_priority
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -82,7 +94,7 @@ FinalPriority: $final_priority
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -106,7 +118,7 @@ $field: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -126,7 +138,7 @@ $field: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -146,7 +158,7 @@ TimeWorked: 5
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -166,7 +178,7 @@ $field: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -186,7 +198,7 @@ AddRequestor: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -204,7 +216,7 @@ DelRequestor: root\@localhost
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -222,7 +234,7 @@ $field: $test_ticket_id
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -232,8 +244,9 @@ END
     ok($links, "ticket has links");
     is($links->Count, 1, "one link");
 
-    my $link_type = $obj->LINKTYPEMAP->{ $field }->{'Type'};
-    my $link_mode = $obj->LINKTYPEMAP->{ $field }->{'Mode'};
+    my $typemap = keys %RT::Link::TYPEMAP ? \%RT::Link::TYPEMAP : $obj->LINKTYPEMAP;
+    my $link_type = $typemap->{ $field }->{'Type'};
+    my $link_mode = $typemap->{ $field }->{'Mode'};
 
     my $link = $links->First;
     is($link->Type, $link_type, "correct type");
@@ -258,7 +271,7 @@ CustomField.{$cf_name}: foo
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -282,7 +295,7 @@ CustomField.{$cf_name}: foo
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -332,7 +345,7 @@ CF.{$cf_name}: fro'b
 
 owner test
 END
-        $id = create_ticket_via_gate( $text );
+        (undef, $id) = $test->send_via_mailgate( $text );
         ok($id, "created ticket");
         my $ticket = RT::Ticket->new($RT::SystemUser);
         $ticket->Load( $id );
@@ -353,7 +366,7 @@ Cc: $cc
 
 cc test
 END
-        $id = create_ticket_via_gate( $text );
+        (undef, $id) = $test->send_via_mailgate( $text );
         ok($id, "created ticket");
         my $ticket = RT::Ticket->new($RT::SystemUser);
         $ticket->Load( $id );
@@ -365,4 +378,21 @@ END
 
 }
 
-1;
+RT::Config->Set('ParseNewMessageForTicketCcs', 1);
+diag("test with ParseNewMessageForTicketCcs set") if $ENV{'TEST_VERBOSE'};
+{
+    my $text = <<END;
+Subject: test
+From: root\@localhost
+
+test
+END
+    my (undef, $id) = $test->send_via_mailgate( $text );
+    ok($id, "created ticket");
+    my $obj = RT::Ticket->new( $RT::SystemUser );
+    $obj->Load( $id );
+    is($obj->id, $id, "loaded ticket");
+    $test_ticket_id = $id;
+}
+
+done_testing();

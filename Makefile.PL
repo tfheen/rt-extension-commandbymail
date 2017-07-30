@@ -1,17 +1,12 @@
 use inc::Module::Install;
 
-#die "This RT Extension will kill your pets and steal your valuables. DO NOT USE IT YET";
 RTx ('RT-Extension-CommandByMail');
-author ('Jesse Vincent <jesse@bestpractical.com>');
-license('perl');
-
+no_index package => "RT::Extension::CommandByMail::Test";
 build_requires('Test::More');
 build_requires('IPC::Open2');
 
-# the patch for RT-3.4.5 has this requirement
-# RT may be require it too, but put it here to be sure 
-requires('UNIVERSAL::require');
-requires('MIME::Entity' => '5.420');
+repository('https://github.com/bestpractical/rt-extension-commandbymail');
+
 auto_install();
 
 my ($lp) = ($INC{'RT.pm'} =~ /^(.*)[\\\/]/);
@@ -25,8 +20,13 @@ substitute(
         RT_BIN_PATH  => $bin_path,
         RT_SBIN_PATH => $sbin_path,
     },
-    qw(xt/utils.pl),
+    {
+        sufix => '.in'
+    },
+    qw(lib/RT/Extension/CommandByMail/Test.pm),
 );
+
+no_index package => 'RT::Extension::CommandByMail::Test';
 
 author_tests('xt');
 
