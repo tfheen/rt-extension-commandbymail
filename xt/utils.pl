@@ -6,7 +6,7 @@ use warnings;
 
 BEGIN {
 ### after:     push @INC, qw(@RT_LIB_PATH@);
-    push @INC, qw(/opt/rt3/local/lib /opt/rt3/lib);
+    push @INC, qw(/usr/share/request-tracker4/lib debian);
 }
 
 use RT;
@@ -15,7 +15,7 @@ RT::LoadConfig();
 use IPC::Open2;
 
 ### after: our $mailgate = '@RT_BIN_PATH@/rt-mailgate';
-our $mailgate = '/opt/rt3/bin/rt-mailgate';
+our $mailgate = '/usr/bin/rt-mailgate';
 die "Couldn't find mailgate ($mailgate) command" unless -f $mailgate;
 
 $mailgate .= ' --debug';

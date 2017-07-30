@@ -19,5 +19,7 @@ override_dh_auto_build:
 	$(MAKE)
 
 override_dh_auto_install:
-	sed -i "s,/usr/share/request-tracker4,$(P)/usr/share/request-tracker4,g" Makefile
+	sed -i "/ExtUtils::Install/ s,/usr/share/request-tracker4,$(P)/usr/share/request-tracker4,g" Makefile
 	dh_auto_install
+	rm -rf "$(P)/usr/share/request-tracker4/man/perllocal.pod" "$(P)/usr/share/request-tracker4/man/auto/"
+	mv "$(P)/usr/share/request-tracker4/man" "$(P)/usr/share/man"
