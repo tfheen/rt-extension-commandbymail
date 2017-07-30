@@ -4,6 +4,7 @@ librt-extension-commandbymail-perl (3.00-1) unstable; urgency=medium
   * Add build-depends on libmodule-install-perl and request-tracker4
   * Bump dh compat version.
     - Remove all hacks from debian/rules, this just works now.
+  * Ship upstream README file with installation instructions.
 
  -- Tollef Fog Heen <tfheen@debian.org>  Sun, 30 Jul 2017 09:59:51 +0200
 
