@@ -9,15 +9,5 @@
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
-P = $(CURDIR)/debian/librt-extension-commandbymail-perl
-
 %:
 	dh $@
-
-override_dh_auto_build:
-	perl Makefile.PL
-	$(MAKE)
-
-override_dh_auto_install:
-	sed -i "/ExtUtils::Install/ s,/usr/share/request-tracker4,$(P)/usr/share/request-tracker4,g" Makefile
-	dh_auto_install
