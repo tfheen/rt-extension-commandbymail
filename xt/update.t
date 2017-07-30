@@ -1,12 +1,8 @@
-#!/usr/bin/perl
-
 use strict;
 use warnings;
 
-use Test::More tests => 134;
-
-BEGIN { require 'xt/utils.pl' }
-RT::Init();
+use RT::Extension::CommandByMail::Test tests => undef;
+my $test = 'RT::Extension::CommandByMail::Test';
 
 my $test_ticket_id;
 
@@ -18,7 +14,7 @@ From: root\@localhost
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -37,7 +33,7 @@ Status: $status
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -56,7 +52,7 @@ FinalPriority: $final_priority
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -79,7 +75,7 @@ $field: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -99,7 +95,7 @@ $field: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -124,7 +120,7 @@ TimeWorked: 10
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -150,7 +146,7 @@ TimeWorked: 5
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -170,7 +166,7 @@ $field: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -192,7 +188,7 @@ AddRequestor: $value
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -210,7 +206,7 @@ DelRequestor: root\@localhost
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -230,7 +226,7 @@ From: root\@localhost
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     ok($id, "created ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -239,7 +235,7 @@ END
 }
 
 diag("set links on update") if $ENV{'TEST_VERBOSE'};
-foreach my $field ( qw(DependsOn DependedOnBy RefersTo ReferredToBy Members MemberOf) ) {
+foreach my $field ( qw(DependsOn DependedOnBy RefersTo ReferredToBy MemberOf Members) ) {
     diag("test $field command") if $ENV{'TEST_VERBOSE'};
     my $text = <<END;
 Subject: [$RT::rtname #$test_ticket_id] test
@@ -249,7 +245,7 @@ $field: $link_ticket_id
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -259,14 +255,16 @@ END
     ok($links, "ticket has links");
     is($links->Count, 1, "one link");
 
-    my $link_type = $obj->LINKTYPEMAP->{ $field }->{'Type'};
-    my $link_mode = $obj->LINKTYPEMAP->{ $field }->{'Mode'};
+    my $typemap = keys %RT::Link::TYPEMAP ? \%RT::Link::TYPEMAP : $obj->LINKTYPEMAP;
+    my $link_type = $typemap->{ $field }->{'Type'};
+    my $link_mode = $typemap->{ $field }->{'Mode'};
 
     my $link = $links->First;
     is($link->Type, $link_type, "correct type");
     isa_ok($link, 'RT::Link');
     my $method = $link_mode .'Obj';
     is($link->$method()->Id, $link_ticket_id, 'set '. $field );
+    ok($obj->DeleteLink(Type => $field, Target => $link_ticket_id));
 }
 
 diag("set custom fields on update") if $ENV{'TEST_VERBOSE'};
@@ -285,7 +283,7 @@ CustomField.{$cf_name}: foo
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -305,7 +303,7 @@ Priority: 44
 
 test
 END
-    my $id = create_ticket_via_gate( $text );
+    my (undef, $id) = $test->send_via_mailgate( $text );
     is($id, $test_ticket_id, "updated ticket");
     my $obj = RT::Ticket->new( $RT::SystemUser );
     $obj->Load( $id );
@@ -316,3 +314,29 @@ END
     like($content, qr/Priority: 44/, "invalid Priority command not stripped");
 }
 
+diag("check CommandByMail group") if $ENV{'TEST_VERBOSE'};
+{
+    ok (my $group = RT::Group->new(RT->SystemUser), "instantiated a group object");
+    ok (my ($gid, $gmsg) = $group->CreateUserDefinedGroup( Name => 'TestGroup', Description => 'A test group',
+                        ), 'Created a new group');
+    RT::Config->Set( CommandByMailGroup => $gid );
+    my $text = <<END;
+Subject: [$RT::rtname #$test_ticket_id] test
+From: root\@localhost
+
+Priority: 44
+
+test
+END
+    my (undef, $id) = $test->send_via_mailgate( $text );
+    is($id, $test_ticket_id, "updated ticket");
+    my $obj = RT::Ticket->new( $RT::SystemUser );
+    $obj->Load( $id );
+    is($obj->id, $id, "loaded ticket");
+    is($obj->Priority, 20, "not updated, user not in CommandByMail group");
+
+    my $content = $obj->Transactions->Last->Content;
+    like($content, qr/Priority: 44/, "text processed as normal email text");
+}
+
+done_testing();
