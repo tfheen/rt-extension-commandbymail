@@ -15,7 +15,7 @@ P = $(CURDIR)/debian/librt-extension-commandbymail-perl
 	dh $@
 
 override_dh_auto_build:
-	perl -Idebian/perl-lib Makefile.PL
+	perl Makefile.PL
 	$(MAKE)
 
 override_dh_auto_install:
