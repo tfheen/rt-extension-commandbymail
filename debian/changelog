@@ -1,6 +1,7 @@
 librt-extension-commandbymail-perl (3.00-1) unstable; urgency=medium
 
   * New upstream version.
+  * Add build-depends on libmodule-install-perl.
 
  -- Tollef Fog Heen <tfheen@debian.org>  Sun, 30 Jul 2017 09:59:51 +0200
 

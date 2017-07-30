@@ -2,7 +2,7 @@ Source: librt-extension-commandbymail-perl
 Section: misc
 Priority: extra
 Maintainer: Tollef Fog Heen <tfheen@debian.org>
-Build-Depends: debhelper (>= 9), libuniversal-require-perl, libmime-tools-perl (>= 5.420), perl (>= 5)
+Build-Depends: debhelper (>= 9), libuniversal-require-perl, libmime-tools-perl (>= 5.420), perl (>= 5), libmodule-install-perl
 Standards-Version: 3.7.2
 
 Package: librt-extension-commandbymail-perl
